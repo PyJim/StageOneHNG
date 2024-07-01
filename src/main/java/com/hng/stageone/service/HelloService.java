@@ -1,7 +1,8 @@
 package com.hng.stageone.service;
-
+import io.github.cdimascio.dotenv.Dotenv;
 
 import com.hng.stageone.model.ResponseModel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -9,6 +10,8 @@ import java.util.Map;
 
 @Service
 public class HelloService {
+
+    Dotenv dotenv = Dotenv.load();
 
     private  final RestTemplate restTemplate = new RestTemplate();
 
@@ -27,8 +30,9 @@ public class HelloService {
         return response != null ? response.get("city") : "Unknown";
     }
 
+
     private  String getTemperature(String city){
-        String apikey = "54ce1a996d5a72bf66e966b22d069e9d";
+        String apikey = dotenv.get("OPEN_WEATHER_MAP_API_KEY");
         String url = String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric", city, apikey);
         Map<String, Object> response = restTemplate.getForObject(url, Map.class);
         Map<String, Object> main = response != null ? (Map<String, Object>) response.get("main") : null;
